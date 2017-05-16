@@ -1,0 +1,27 @@
+version: '2'
+services:
+  dct_s1:
+    image: node:7-alpine
+    ports:
+      - 3001:3001
+    command: 'node /src/app.js'
+    environment:
+      - PORT=3001
+      - DELAY=10
+    volumes:
+      - ./../tools/test-app.js:/src/app.js
+
+  dct_s2:
+    image: node:7-alpine
+    ports:
+      - 3002
+    command: 'node /src/app.js'
+    environment:
+    - PORT=3002
+    volumes:
+      - ./../tools/test-app.js:/src/app.js
+
+  db:
+    image: mongo:3.3
+    ports:
+      - 27017

@@ -1,0 +1,5 @@
+dct_s1:
+  image: alpine:3.4
+  ports:
+    - '3001'
+  command: 'tail -f ${FILE_TO_TAIL}'
