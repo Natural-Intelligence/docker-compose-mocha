@@ -50,11 +50,12 @@ module.exports = {
    * for your test environment
    *
    */
-  dockerComposeTool: function dockerComposeTool(beforeFunction/* :Function*/,
-    afterFunction/* :Function*/,
+  dockerComposeTool: function dockerComposeTool(beforeFunction/* :Function */,
+    afterFunction/* :Function */,
     pathToComposeFile/* : string */,
     { startOnlyTheseServices, envName, envVars,
-      healthCheck, cleanUp, containerCleanUp }/* :DockerComposeToolOptions*/ = {})/* : string*/ {
+      healthCheck, cleanUp, containerCleanUp, shouldPullImages = true }
+      /* :DockerComposeToolOptions */ = {})/* : string */ {
     const randomComposeEnv = envName
       ? extractEnvFromEnvName(envName)
       : getRandomEnvironmentName(chance);
@@ -64,7 +65,9 @@ module.exports = {
     const performContainerCleanup = containerCleanUp === undefined ? true : containerCleanUp;
 
     beforeFunction(Promise.coroutine(function* () {
-      yield dockerPullImagesFromComposeFile(pathToComposeFile, startOnlyTheseServices);
+      if (shouldPullImages) {
+        yield dockerPullImagesFromComposeFile(pathToComposeFile, startOnlyTheseServices);
+      }
       if (performCleanup) {
         yield cleanupOrphanEnvironments();
       }
@@ -112,12 +115,12 @@ module.exports = {
   },
   getAddressForService,
   getLogsForService,
-  getRandomPortForService(...args/* :Object[]*/) {
+  getRandomPortForService(...args/* :Object[] */) {
     console.warn('getRandomPortForService has been deprecated. Use "getAddressForService" instead (same signature)');
 
     return getAddressForService(...args);
   },
-  getRandomAddressForService(...args/* :Object[]*/) {
+  getRandomAddressForService(...args/* :Object[] */) {
     console.warn('getRandomAddressForService has been deprecated. Use "getAddressForService" instead (same signature)');
 
     return getAddressForService(...args);

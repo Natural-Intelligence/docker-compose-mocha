@@ -21,12 +21,24 @@ describe('dockerComposeTool', () => {
 
   it('should load an environment correctly and wait for it (healthcheck) to be ready', () => runAnEnvironment(pathToCompose));
 
-  it.only('should load a sub-environment correctly, and then the rest of the environment', coroutine(function* () {
+
+  it('should load a sub-environment correctly, and then the rest of the environment', coroutine(function* () {
     const spy = sinon.spy(dockerPullImageByName);
     dockerPullHostObject.dockerPullImageByName = spy;
     const envName = yield runASubEnvironment(pathToCompose);
     expect(spy.callCount).to.equal(2);
     yield runAnEnvironment(pathToCompose, envName);
+  }));
+
+  it('should not pull images if shouldPull is false', coroutine(function* () {
+    let caughtException = false;
+    try {
+      yield runAnEnvironment(`${__dirname}/docker-compose-with-unpulled-image.yml`, null, { shouldPullImages: false });
+    } catch (e) {
+      caughtException = true;
+    }
+
+    expect(caughtException).to.equal(true);
   }));
 
   it('should stop the service by name and see its not running and then start the service and see its running', () => runAnEnvironmentWithStopStart(pathToCompose));
