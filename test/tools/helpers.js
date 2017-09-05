@@ -29,10 +29,10 @@ function verifyEnvironmentDownByProjectName(pathToCompose, runName) {
         Promise.resolve()));
 }
 
-const runAnEnvironment = coroutine(function* (pathToCompose, targetEnvName) {
+const runAnEnvironment = coroutine(function* (pathToCompose, targetEnvName, options) {
   let generatedEnvName = '';
   yield simulateMochaRun((before, after) => {
-    generatedEnvName = main.dockerComposeTool(before, after, pathToCompose, {
+    generatedEnvName = main.dockerComposeTool(before, after, pathToCompose, Object.assign({
       targetEnvName,
       healthCheck: {
         state: true,
@@ -56,7 +56,7 @@ const runAnEnvironment = coroutine(function* (pathToCompose, targetEnvName) {
           },
         },
       },
-    });
+    }, options || {}));
   }, coroutine(function* () {
     const resultDct1 = yield main.getAddressForService(generatedEnvName, pathToCompose, 'dct_s1', 3001);
     expect(Number(resultDct1.replace('0.0.0.0:', ''))).to.be.above(1);

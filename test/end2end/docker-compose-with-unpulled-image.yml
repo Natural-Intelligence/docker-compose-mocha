@@ -1,0 +1,4 @@
+version: '2'
+services:
+  unpulled-image:
+    image: alpine:3.1
