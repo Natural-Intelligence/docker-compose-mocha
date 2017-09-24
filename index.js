@@ -54,7 +54,7 @@ module.exports = {
     afterFunction/* :Function */,
     pathToComposeFile/* : string */,
     { startOnlyTheseServices, envName, envVars,
-      healthCheck, cleanUp, containerCleanUp, shouldPullImages = true }
+      healthCheck, cleanUp, containerCleanUp, shouldPullImages = true, brutallyKill = false }
       /* :DockerComposeToolOptions */ = {})/* : string */ {
     const randomComposeEnv = envName
       ? extractEnvFromEnvName(envName)
@@ -105,7 +105,7 @@ module.exports = {
     afterFunction(() => {
       if (performContainerCleanup) {
         return cleanupContainersByEnvironmentName(runNameSpecific,
-          pathToComposeFile, runNameDisplay);
+          pathToComposeFile, runNameDisplay, brutallyKill);
       }
 
       return Promise.resolve();
