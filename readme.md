@@ -26,33 +26,33 @@ Inside your project directory type the following code:
 
 ### When using npm
 ```bash
-$ npm i docker-compose-mocha --save-dev 
+$ npm i docker-compose-mocha --save-dev
 ```
 
 ### When using yarn
 ```bash
-$ yarn add docker-compose-mocha --dev 
+$ yarn add docker-compose-mocha --dev
 ```
 
 ## Cleanup logic
 The compose tool has a cleanup logic against mocha before and after functions.
 before:
 Full environment cleanup of all containers, networks, volumes etc... (Start tests with clean state).
-Full cleanup uses environment variable: `process.env.CONTAINER_STALE_MIN` parameter (with 0 minutes default value). 
+Full cleanup uses environment variable: `process.env.CONTAINER_STALE_MIN` parameter (with 0 minutes default value).
 It means that every containers/networks created by the tool will be removed immediately from its creation time (unix timestamp).
 * In your CI machines when your run multiple tests on the same time,
-you probably want to change cleanup `CONTAINER_STALE_MIN` to 20-30 minutes in order to prevent cleanup collision between tests. 
+you probably want to change cleanup `CONTAINER_STALE_MIN` to 20-30 minutes in order to prevent cleanup collision between tests.
 
 after:
 Cleanup of current running environment containers.
 
 * On local developer machine (NODE_ENV empty or equal to development) cleanup run immediately on each run.
 When in development mode you can control cleanup flow. Example:
- 
+
  ```js
  // run only a and b, do not cleanup container (We need them up and running for second call to dockerComposeTool)
  const envName = dct.dockerComposeTool(before, after, pathToCompose, {startOnlyTheseServices: ['a', 'b'], containerCleanUp: false});
- 
+
 // add services c and d with the same envName. Do not perform full cleanup on before.
  dct.dockerComposeTool(before, after, pathToCompose, {startOnlyTheseServices: ['c', 'd'], envName, cleanUp: false});
  // now run all the rest
@@ -66,7 +66,7 @@ cleanup parameters:
 ## Usage example
 
 Assume the following docker-compose.yml
-```yaml       
+```yaml
 service1:
     image: ubuntu:14.04
     links:
@@ -80,17 +80,17 @@ service2:
         - db
     ports:
         - '3004'
-        
+
 db:
     image: mongo:3.3
     ports:
         - '27017'
-    
+
 ```
 
 After using our package's code to fire up an environment as defined in the Yaml file you will have 3 services up and running
 in your computer as Docker containers. all of them attaching a random TCP/IP port to your host computer (IP 127.0.0.1 / 0.0.0.0)
-  
+
 Consider the following Javascript code which is supposed to be placed in your end to end test suite setup.js file
 (most preferably in your before() block)
 
@@ -101,7 +101,7 @@ const {dockerComposeTool} = require('docker-compose-mocha');
 const pathToCompose = './docker-compose.yml';
 
 const envName = dockerComposeTool(before, after, pathToCompose);
-  
+
 ```
 
 Once this code ran before your test suite, you will have all the services from your Yaml file
@@ -144,7 +144,7 @@ specify here the envName you received in the previous call.
 * `cleanUp`: specify here if you want to run full cleanup (run on mocha before).
 * `containerCleanUp`: specify here if you want to run container cleanup (run on mocha after).
 
-Disabling cleanup is especially useful when you run sub environments.  
+Disabling cleanup is especially useful when you run sub environments.
 
 Example:
 
@@ -181,6 +181,13 @@ dct.dockerComposeTool(before, after, pathToCompose, {startOnlyTheseServices: ['c
 dct.dockerComposeTool(before, after, pathToCompose, {envName});
 ```
 
+## Optimization options
+
+* `brutallyKill`: will destroy the containers and not gently stop them. Usually, for test containers
+  this is enough and improves shutdown considerably.
+* `shouldPullImages`: will pull images only if this is true (and the default is true), otherwise it will
+  assume they are already pulled. This should be used only in production, and thus should be used thusly:
+  `shouldPullImages: !!process.env.NODE_ENV && process.env.NODE_ENV !== 'production'`
 
 ## Service checking
 
@@ -215,7 +222,7 @@ const options = {
 };
 
 const envName = dockerComposeTool(before, after, pathToCompose);
-  
+
 ```
 
 ### Custom polling methods
@@ -249,7 +256,7 @@ const options = {
 
 Thanks for reading and enjoy Dockerizing your end to end test suites.
 
-This package was developed by: [Itamar Arjuan](https://github.com/itamararjuan) and with some help from: 
+This package was developed by: [Itamar Arjuan](https://github.com/itamararjuan) and with some help from:
 [Gil Tayar](https://github.com/giltayar) and [Rotem Bloom](https://github.com/rockrotem).
 
 Natural Intelligence - Node Infrastructure Team
