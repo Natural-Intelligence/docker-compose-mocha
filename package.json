@@ -1,6 +1,6 @@
 {
   "name": "docker-compose-mocha",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Tool used for setting up an isolated environment for end to end testing / integration testing using Docker Compose",
   "main": "index.js",
   "scripts": {
