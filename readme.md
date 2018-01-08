@@ -233,15 +233,15 @@ our service is a MySQL container tagged in your compose file as the service `mys
 and binded to your host at port `30156`. Your polling method will accept `0.0.0.0:30156` (string) as an input
 into your method so you can do your polling mechanism. Example of such a method can look like the following:
 
-(Important: your method should be thenable (returns a promise, and can also be (more advisable) a coroutine
+(Important: your method should return a promise, so it can also be an async function
 and should also return `true` upon a successful polling or `false` for a non successful one)
 
 ```js
 const options = {
   custom: {
-    mysql: Promise.coroutine(function*(address) {
+    mysql: async function(address) {
         try {
-          const connection = yield mysqlDriver.connect(address);
+          const connection = await mysqlDriver.connect(address);
           console.log(connection); // => The connection here should be open
           return true;
         } catch (err) {
