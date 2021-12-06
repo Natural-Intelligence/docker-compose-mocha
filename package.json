@@ -25,7 +25,7 @@
     "cli-spinner": "^0.2.5",
     "js-yaml": "^3.7.0",
     "request": "^2.79.0",
-    "request-promise": "^4.1.1"
+    "request-promise": "^4.2.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",
